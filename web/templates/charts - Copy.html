@@ -1,0 +1,307 @@
+{% extends 'starter.html' %} {% block container %}
+
+<body data-ng-app="DINEApp" class="ng-cloak" data-ng-controller='chartsController'>
+
+    <!--<div class="card-header" style="height: 50px;">-->
+      <!--<i class="far fa-chart-bar"></i> MSD Biotech Dublin | Charts-->
+    <!--</div>-->
+    <!--<br>-->
+
+    <div class="modal fade" id="systemModal" tabindex="-1" role="dialog" aria-labelledby="systemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{[point.title]}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body">
+        <form name="myForm">
+            <div class="form-group">
+                <label for="System" class="col-form-label">System:</label>
+                  <select id="System" name="System" class="form-control" ng-model="point.System" ng-options="v for v in point.system_list">
+                  </select>
+            </div>
+            <div class="form-group">
+                <label for="Component" class="col-form-label">Component:</label>
+                  <select id="Component" name="Component" class="form-control" ng-model="point.Component" ng-options="v for v in all_components">
+                  </select>
+            </div>
+            <div class="form-group">
+                <label for="Name" class="col-form-label">Name:</label>
+                <textarea ng-model="point.Name" type="text" class="form-control"  id="Name"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="Related_Symbols" class="col-form-label">Related_Symbols:</label>
+                <div isteven-multi-select id="Related_Symbols"
+                          input-model="point.Related_Symbols"
+                          output-model="point.Related_Symbols_output"
+                          button-label="icon name"
+                          item-label="icon name maker"
+                          tick-property="ticked">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="Dependencies" class="col-form-label">Dependencies:</label>
+                <div isteven-multi-select id="Dependencies"
+                          input-model="point.Dependencies"
+                          output-model="point.Dependencies_output"
+                          button-label="icon name"
+                          item-label="icon name maker"
+                          tick-property="ticked">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="Formula" class="col-form-label">Formula:</label>
+                <textarea class="form-control" ng-model="point.Formula" id="Formula"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="Type" class="col-form-label">Type:</label>
+                  <select id="Type" name="Type" class="form-control" ng-model="point.Type">
+                    <option value="Primary">Primary</option>
+                    <option value="Secondary">Secondary</option>
+                    <option value="Constant">Constant</option>
+                      <option value="Rating">Rating</option>
+                  </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Variable" class="col-form-label">Variable:</label>
+                  <select id="Variable" name="Variable" class="form-control" ng-model="point.Variable">
+                    <option value="YES">YES</option>
+                    <option value="NO">NO</option>
+                  </select>
+            </div>
+
+
+            <div class="form-group">
+                <label for="Symbol" class="col-form-label">Symbol:</label>
+                <textarea class="form-control" ng-model="point.Symbol" id="Symbol"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Unit" class="col-form-label">Unit:</label>
+                <textarea class="form-control" ng-model="point.Unit" id="Unit"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="Comment" class="col-form-label">Comment:</label>
+                <textarea class="form-control" ng-model="point.Comment" id="Comment"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="Value" class="col-form-label">Value:</label>
+                <textarea class="form-control" ng-model="point.Value" id="Value"></textarea>
+            </div>
+    </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="save_point()" data-dismiss="modal">Save Data Point</button>
+    </div>
+    </div>
+    </div>
+    </div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body">
+        <form name="myForm">
+            <div class="form-group">
+                <label for="System" class="col-form-label">Confirm Delete ???</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" ng-click="confirmed_delete()" data-dismiss="modal">DELETE</button>
+    </div>
+    </div>
+    </div>
+    </div>
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="far fa-chart-bar"></i>DINE Charts</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                      <div isteven-multi-select
+                          input-model="system_list"
+                          output-model="output_sys_list"
+                          on-close="sys_change()"
+                          button-label="icon name"
+                          item-label="icon name maker"
+                          max-labels="1"
+                          tick-property="ticked">
+                </div>
+                      <div isteven-multi-select
+                  input-model="component_list"
+                  output-model="output_comp_list"
+                  button-label="icon name"
+                  on-close="comp_change()"
+                  item-label="icon name maker"
+                     max-labels="1"
+                  tick-property="ticked">
+                </div>
+                      <div isteven-multi-select
+                  input-model="component_list"
+                  output-model="output_comp_list"
+                  button-label="icon name"
+                  on-close="comp_change()"
+                  item-label="icon name maker"
+                     max-labels="1"
+                  tick-property="ticked">
+                </div>
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <!-- interactive chart -->
+                    <div class="card card-primary card-outline">
+                      <div class="card-header">
+                        <h3 class="card-title">
+                          <i class="far fa-chart-bar"></i>
+                          Interactive Area Chart
+                        </h3>
+
+                        <div class="card-tools">
+                          Real time
+                          <div class="btn-group" id="realtime" data-toggle="btn-toggle">
+                            <button type="button" class="btn btn-default btn-sm active" data-toggle="on">On</button>
+                            <button type="button" class="btn btn-default btn-sm" data-toggle="off">Off</button>
+                          </div>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        <div id="interactive" style="height: 300px;"></div>
+                      </div>
+                      <!-- /.card-body-->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                <!-- Line chart -->
+                <div class="card card-primary card-outline">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                      <i class="far fa-chart-bar"></i>
+                      Line Chart
+                    </h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div id="line-chart" style="height: 300px;"></div>
+                  </div>
+                  <!-- /.card-body-->
+                </div>
+                <!-- /.card -->
+
+                <!-- Area chart -->
+                <div class="card card-primary card-outline">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                      <i class="far fa-chart-bar"></i>
+                      Area Chart
+                    </h3>
+
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div id="area-chart" style="height: 338px;" class="full-width-chart"></div>
+                  </div>
+                  <!-- /.card-body-->
+                </div>
+                <!-- /.card -->
+
+                </div>
+                <div class="col-md-6">
+                <!-- Bar chart -->
+                <div class="card card-primary card-outline">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                      <i class="far fa-chart-bar"></i>
+                      Bar Chart
+                    </h3>
+
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div id="bar-chart" style="height: 300px;"></div>
+                  </div>
+                  <!-- /.card-body-->
+                </div>
+                <!-- /.card -->
+
+                <!-- Donut chart -->
+                <div class="card card-primary card-outline">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                      <i class="far fa-chart-bar"></i>
+                      Donut Chart
+                    </h3>
+
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div id="donut-chart" style="height: 300px;"></div>
+                  </div>
+                  <!-- /.card-body-->
+                </div>
+                <!-- /.card -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- Placed at the end of the document so the pages load faster -->
+    <script type='text/javascript' src="{{ url_for('static', filename='js/base.js', version=version_number) }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='angular/app.js', version=version_number) }}"></script>
+      <!--<script data-require="select2@*" data-semver="4.0.0" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.js"></script>-->
+
+
+</body>
+
+{% endblock %}

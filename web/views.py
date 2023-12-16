@@ -128,8 +128,8 @@ def index(path):
         return render_template('layouts/auth-default.html',content=render_template('pages/error-404.html'))
 
 
-@app.route('/api/systems', methods=['GET'])
-def initialise_systems():
+@app.route('/api/initialise', methods=['GET'])
+def initialise_app():
 
     labelColorTestData = [
         {"label": "person a",

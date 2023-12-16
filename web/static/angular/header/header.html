@@ -1,0 +1,95 @@
+<div ng-controller='headerController'>
+<div id='main-header'>
+	<h1> JANOS  <small>{[ headerTitle ]}</small></h1>
+	<!-- <h1> BRACE <small>{[ headerTitle ]}</small></h1> -->
+	<img src='/static/images/bell-labs-logo.png' alt='Bell Labs Logo'>
+</div>
+
+<div id='main-navbar'>
+	<div id='left-menu'>
+		<div id='left-menu-child'>
+			<a href='/'>
+				<img src='/static/images/home.png' alt='Home Icon'>
+			</a>
+			<a href='/settings/project/release-dates' ng-if='config.settings'>
+				<img src='/static/images/settings.png' alt='Settings Icon'>
+			</a>
+			<p>{[ config.first_name ]} {[ config.surname ]}    |    <a href='/logout'>Logout</a></p>
+		</div>
+	</div>
+
+	<ul>
+		<li ng-class="checkActiveView('saoix')">
+			<a>Quality Metrics</a>
+			<ul>
+				<li ng-class="checkActiveSubview('naxos', 'category1')">
+					<a href="/">Metrics</a>
+				</li>
+			</ul>
+		</li>
+		<li ng-class="checkActiveView('saoix')">
+			<a>Code Analytics</a>
+			<ul>
+				<li ng-class="checkActiveSubview('cassandra', 'category1')">
+					<a href="/">Cassandra</a>
+				</li>
+			</ul>
+		</li>
+		<li ng-class="checkActiveView('saoi')">
+			<a>Escaped Defect Analysis</a>
+			<ul>
+				<li ng-class="checkActiveSubview('saoi', 'category')">
+					<a href="/saoi/category">SAOI</a>
+				</li>
+			</ul>
+		</li>
+<!-- 		<li ng-class="checkActiveView('early-defect-prediction')">
+			<a>Early Defect Prediction</a>
+			<ul>
+
+
+			</ul>
+		</li> -->
+
+<!-- 		<li ng-class="checkActiveView('project-management-view')">
+			<a>Project Management</a>
+			<ul>
+				<li ng-class="checkActiveSubview('project-management-view', 'nfi-combined')">
+					<a href='/project-management-view/nfi-combined'>NF+I Combined</a>
+				</li>
+				<li ng-class="checkActiveSubview('project-management-view', 'nfi-seperated')">
+					<a href='/project-management-view/nfi-seperated'>NF+I Seperated</a>
+				</li>
+
+			</ul>
+		</li> -->
+
+		<li ng-class="checkActiveView('quality')">
+			<a>Defect Prediction</a>
+			<ul>
+				<li ng-class="checkActiveSubview('quality', 'srgm')">
+					<a href='/quality/srgm'>SRGM</a>
+				</li>
+				<li ng-class="checkActiveSubview('quality', 'release-over-release')">
+					<a href='/quality/release-over-release'>Release-Over-Release</a>
+				</li>
+				<li ng-class="checkActiveSubview('quality', 'edp1')">
+					<a href="/early-defect-prediction/edp1">EDP1</a>
+				</li>
+				<li ng-class="checkActiveSubview('quality', 'edp2')">
+					<a href="/early-defect-prediction/edp2">EDP2</a>
+				</li>
+				<li ng-class="checkActiveSubview('quality', 'edp3')">
+					<a href="/early-defect-prediction/edp3">EDP3</a>
+				</li>
+				<li ng-class="checkActiveSubview('quality', 'nfi-combined')">
+					<a href='/project-management-view/nfi-combined'>NF+I Combined</a>
+				</li>
+				<li ng-class="checkActiveSubview('quality', 'nfi-seperated')">
+					<a href='/project-management-view/nfi-seperated'>NF+I Seperated</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+</div>

@@ -1,0 +1,299 @@
+{% extends 'base.html' %} {% block container %}
+    <style>
+        #chart {
+  background: #fff;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+text {
+  pointer-events: none;
+}
+
+.grandparent text {
+  font-weight: bold;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+}
+
+rect.parent,
+.grandparent rect {
+  stroke-width: 2px;
+}
+
+rect.parent {
+    pointer-events: none;
+}
+
+.grandparent rect {
+  fill: orange;
+}
+
+.grandparent:hover rect {
+  fill: #ee9700;
+}
+
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+}
+
+.children rect.parent {
+  fill: #bbb;
+  fill-opacity: .5;
+}
+
+.children:hover rect.child {
+  fill: #bbb;
+}
+    </style>
+
+
+
+
+
+<body data-ng-app="janosApp" class="ng-cloak" data-ng-controller='tableController'>
+            <div class="card-header" style="height: 50px;">
+              <i class="fa fa-bar-chart"></i> MSD Biotech Dublin | System Hierarchy
+                    <div style="float: right;" class="btn-group btn-group-sm" data-toggle="buttons" >
+                          <input style="float: right;" type="submit" class="btn btn-xs btn-primary " value="Tree Map" ng-click='displayTreeMap()' ng-class="currentView === 'tree' ? 'active' : ''">
+                          <input style="float: right;" type="submit" class="btn btn-xs btn-primary " value="Tag List" ng-click='displayTags()' ng-class="currentView === 'table' ? 'active' : ''">
+                    </div>
+
+
+            </div>
+
+                    <!--<div style="float: right;" class="btn-group btn-group-sm" data-toggle="buttons" >-->
+                          <!--&lt;!&ndash;<input style="float: right;" type="submit" class="btn btn-xs btn-primary " value="GO" ng-click='displayServices()' ng-class="OccurenceCurrentView === 'services' ? 'active' : ''">&ndash;&gt;-->
+                          <!--<input style="float: right;" type="submit" class="btn btn-xs btn-primary " value="DETAILS" ng-click='displayTags()'>-->
+                    <!--</div>-->
+
+                <div class="card-body" id="wtf">
+                  <div class='displayArea'>
+
+                      <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong>System Users</strong>
+                      <span class="badge pull-right">Total Users : {[ users.length ]}</span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row col-sm-12">
+                        <div class="pull-left col-sm-6">
+                          Ordered by :
+                        </div>
+                        <div class="pull-right">
+                          <span>Filtered by : </span>
+                          <span ng-show="search.firstName"
+                            >First Name =<span class="badge">{[search.firstName]}</span>
+                          </span>
+                          <span ng-show="search.lastName"
+                            >Last Name =<span class="badge">{[search.lastName]}</span>
+                          </span>
+                          <span ng-show="search.email"
+                            >Email =<span class="badge">{[search.email]}</span>
+                          </span>
+                        </div>
+                      </div>
+                      <table
+                        class="table table-striped table-bordered"
+                        ng-hide="users.length==0"
+                      >
+                        <thead>
+                          <tr>
+                            <th>
+                              <input
+                                type="text"
+                                class="form-control"
+                                ng-model="search.firstName"
+                                placeholder="Filter by First Name"
+                              />
+                            </th>
+                            <th>
+                              <input
+                                type="text"
+                                class="form-control"
+                                ng-model="search.lastName"
+                                placeholder="Filter by Last Name"
+                              />
+                            </th>
+                            <th>
+                              <input
+                                type="text"
+                                class="form-control"
+                                ng-model="search.email"
+                                placeholder="Filter by Email"
+                              />
+                            </th>
+                            <th></th>
+                          </tr>
+                          <tr>
+                            <th ng-click="setSort('firstName')">
+                              First Name<span
+                                class="pull-right fas fa-long-arrow-alt-up"
+                                ng-show="sort==='firstName' && reverse"
+                              ></span>
+                              <span
+                                class="pull-right fas fa-long-arrow-alt-down"
+                                ng-show="sort==='firstName' && !reverse"
+                              ></span>
+                            </th>
+                            <th ng-click="setSort('lastName')">
+                              Last Name<span
+                                class="pull-right fas fa-long-arrow-alt-up"
+                                ng-show="sort === 'lastName' && reverse"
+                              ></span>
+                              <span
+                                class="pull-right fas fa-long-arrow-alt-down"
+                                ng-show="sort === 'lastName' && !reverse"
+                              ></span>
+                            </th>
+                            <th ng-click="setSort('email')">
+                              Email<span
+                                class="pull-right fas fa-long-arrow-alt-up"
+                                ng-show="sort==='email' && reverse"
+                              ></span>
+                              <span
+                                class="pull-right fas fa-long-arrow-alt-down"
+                                ng-show="sort==='email' && !reverse"
+                              ></span>
+                            </th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            ng-repeat="user in users | filter:search | orderBy:sort:reverse | limitTo: selectedPageSize : currentPage*selectedPageSize track by $index"
+                          >
+                            <td ng-click="editUser(user)">
+                              <span ng-hide="user.editMode">{[user.firstName]}</span>
+                              <input
+                                type="text"
+                                name="firstName"
+                                ng-show="user.editMode"
+                                class="form-control"
+                                ng-model="user.firstName"
+                                placeholder="First Name"
+                                required=""
+                              />
+                            </td>
+                            <td ng-click="editUser(user)">
+                              <span ng-hide="user.editMode">{[user.lastName]}</span>
+                              <input
+                                type="text"
+                                ng-show="user.editMode"
+                                name="lastName"
+                                class="form-control"
+                                ng-model="user.lastName"
+                                placeholder="Last Name"
+                                required=""
+                              />
+                            </td>
+                            <td ng-click="editUser(user)">
+                              <span ng-hide="user.editMode">{[user.email]}</span>
+                              <input
+                                type="text"
+                                ng-show="user.editMode"
+                                name="email"
+                                class="form-control"
+                                ng-model="user.email"
+                                placeholder="Email"
+                                required=""
+                              />
+                            </td>
+                            <td>
+                              <a href="" ng-hide="user.editMode" ng-click="editUser(user)"
+                                >Edit</a
+                              >
+                              <a
+                                href=""
+                                ng-hide="user.editMode"
+                                ng-click="deleteUser(user,$index)"
+                                >Delete</a
+                              >
+                              <a
+                                href=""
+                                ng-show="user.editMode"
+                                ng-click="saveUser(user,$index)"
+                                >Update</a
+                              >
+                              <a href="" ng-show="user.editMode" ng-click="cancel(user)"
+                                >Cancel</a
+                              >
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="row">
+                        <div class="col-sm-2">
+                          <span class="col-sm-5">Pagesize:</span>
+                          <span class="col-sm-7">
+                            <select
+                              class="form-control"
+                              ng-options="pageSize for pageSize in pageSizes"
+                              ng-model="selectedPageSize"
+                            ></select>
+                          </span>
+                        </div>
+                        <div class="col-sm-6">
+                          <button
+                            class="btn btn-small btn-info"
+                            ng-disabled="currentPage <1"
+                            ng-click="currentPage=currentPage-1"
+                          >
+                            Prev Page
+                          </button>
+                          <!--span class="col-sm-3">Goto Page:</span>
+                          <span class="col-sm-2">
+                            <select class="form-control" ng-options="page for page in pages" ng-model="currentPage"></select>
+                          </span-->
+                          <button
+                            class="btn btn-small btn-info"
+                            ng-disabled="currentPage >= users.length/selectedPageSize - 1"
+                            ng-click="currentPage=currentPage+1"
+                          >
+                            Next Page
+                          </button>
+                        </div>
+                        <div class="pull-right col-sm-4">
+                          <button class="btn btn-warning" ng-click="refreshUsers()">
+                            Refresh
+                          </button>
+                          <button class="btn btn-success" ng-click="bulkUpdateUsers()">
+                            Bulk Update
+                          </button>
+                          <button class="btn btn-danger" ng-click="bulkDeleteUsers()">
+                            Bulk Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+               
+            </div>
+           </div>
+          </div>
+
+        <div class="row">
+          <!-- /widget -->
+        </div>
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+    <script type='text/javascript' src="{{ url_for('static', filename='js/base.js', version=version_number) }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='angular/app.js', version=version_number) }}"></script>
+
+
+</body>
+
+
+{% endblock %}

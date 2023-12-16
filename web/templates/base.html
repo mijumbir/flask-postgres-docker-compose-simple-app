@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>Digital Manufacturing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Bootstrap core CSS-->
+    <link href="../static/base-dashboard/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="../static/base-dashboard/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="../static/base-dashboard/css/angularjs-datetime-picker.css" type="text/css">
+
+    <!-- Custom styles for this template-->
+    <link href="../static/base-dashboard/css/sb-admin.css" rel="stylesheet">
+
+    <!-- Angular -->
+    <script src="https://code.angularjs.org/1.7.6/angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-dropdown-multiselect/1.11.8/angularjs-dropdown-multiselect.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.4/angular-material.js"></script>
+    <!-- D3 -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body data-ng-app="DINEApp"   class="fixed-nav sticky-footer bg-dark" id="page-top">
+  <!-- Navigation-->
+  <nav  ng-cloak class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <a class="navbar-brand" href="{{ url_for('dashboard')}}">Digital Manufacturing</a>
+{#    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">#}
+{#      <span class="navbar-toggler-icon"></span>#}
+{#    </button>#}
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul  class="navbar-nav navbar-sidenav" id="exampleAccordion">
+           <li class="nav-item"  data-placement="right" title="Tree Map">
+              <a class="nav-link" href="{{ url_for('index')}}">
+                <i class="fa fa-sitemap"></i>
+                <span class="nav-link-text">Tree Map</span>
+              </a>
+          </li>
+          <li class="nav-item"  data-placement="right" title="Tags List">
+          <a class="nav-link" href="{{ url_for('tags_list')}}">
+            <i class="fa fa-table"></i>
+            <span class="nav-link-text">Tags List</span>
+          </a>
+          </li>
+
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
+          <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
+            <i class="fa fa-fw fa-area-chart"></i>
+            <span class="nav-link-text">Alarms</span>
+          </a>
+          <ul   class="sidenav-second-level collapse" id="collapseComponents" >
+                <li>
+                    <a>Patterns  </a>
+                </li>
+                <li>
+                    <a>Diagnostics </a>
+                </li>
+          </ul>
+        </li>
+
+      </ul>
+      <ul class="navbar-nav sidenav-toggler" >
+        <li class="nav-item" >
+          <a class="nav-link text-center" id="sidenavToggler" >
+            <i class="fa fa-fw fa-angle-left"></i>
+          </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+          <a class="nav-link"  href="{{ url_for('index')}}">
+            <i class="fa fa-home"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"  href="{{ url_for('index')}}">
+            <i class="fa fa-fw fa-cog"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"  href="{{ url_for('logout')}}">
+            <i class="fa fa-fw fa-sign-out"></i></a>
+        </li>
+
+      </ul>
+    </div>
+  </nav>
+
+    <div class="content-wrapper">
+         <div class="container-fluid">
+              {% block container %}
+              {% endblock %}
+         </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="../static/base-dashboard/js/jquery.min.js"></script>
+    <script src="../static/base-dashboard/js/bootstrap.bundle.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="../static/base-dashboard/js/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="../static/base-dashboard/js/sb-admin.min.js"></script>
+
+      <!-- Core plugin JavaScript-->
+<!--     <script type='text/javascript' src="{{ url_for('static', filename='js/Chart.bundle.js', version=version_number) }}"></script>
+ -->
+	<!-- Angular App -->
+	<script type='text/javascript' src="{{ url_for('static', filename='angular/app.js', version=version_number) }}"></script>
+	<!-- Login Script -->
+	<script type='text/javascript' src="{{ url_for('static', filename='angular/header/header.controller.js', version=version_number) }}"></script>
+
+   <script type='text/javascript' src="{{ url_for('static', filename='angular/quality/angularjs-datetime-picker.js', version=version_number) }}"></script>
+
+    <!-- Graph Service -->
+    <script type='text/javascript' src="{{ url_for('static', filename='angular/services/graph.service.js', version=version_number) }}"></script>
+
+    <script type='text/javascript'
+            src="{{ url_for('static', filename='angular/dropdown/dropdown.controller.js', version=version_number) }}"></script>
+    <script type='text/javascript'
+            src="{{ url_for('static', filename='angular/dropdown/dropdown.directive.js', version=version_number) }}"></script>
+
+
+</body>
+</html>

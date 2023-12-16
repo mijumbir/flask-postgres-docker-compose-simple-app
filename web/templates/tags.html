@@ -1,0 +1,341 @@
+{% extends 'starter.html' %} {% block container %}
+    <style>
+        #chart {
+  background: #fff;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+text {
+  pointer-events: none;
+}
+
+.grandparent text {
+  font-weight: bold;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+}
+
+rect.parent,
+.grandparent rect {
+  stroke-width: 2px;
+}
+
+rect.parent {
+    pointer-events: none;
+}
+
+.grandparent rect {
+  fill: orange;
+}
+
+.grandparent:hover rect {
+  fill: #ee9700;
+}
+
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+}
+
+.children rect.parent {
+  fill: #bbb;
+  fill-opacity: .5;
+}
+
+.children:hover rect.child {
+  fill: #bbb;
+}
+    </style>
+
+
+<body data-ng-app="DINEApp" class="ng-cloak" data-ng-controller='tagsController'>
+            <div class="card-header" style="height: 50px;">
+              <i class="fa fa-table"></i> MSD Biotech Dublin | List of NQBMS Tags
+            </div>
+
+                <div class="card-body" id="wtf">
+                  <div class='displayArea' >
+                    <div class="panel-heading" style="background-color:#00877c">
+                    <div class="row" >
+                        <div class="col-sm-4">
+
+                             Total Tags : {[ tags.length ]} | Tags Per Page:
+                          <select class="form-control-sm" ng-options="pageSize for pageSize in pageSizes" ng-model="selectedPageSize" ></select>
+                          <!--<span class="col-sm-7">-->
+                            <!--<select class="form-control-sm" ng-options="pageSize for pageSize in pageSizes" ng-model="selectedPageSize" ></select>-->
+                          <!--</span>-->
+                        </div>
+                        <div class="col-sm-6">
+                            <button
+                              class="btn btn-xs btn-info"
+                              ng-disabled="currentPage <1"
+                              ng-click="currentPage=currentPage-1"
+                            >
+                              <i class="fa fa-angle-double-left" aria-hidden="true" title="Previous Page"></i>
+                            </button>
+                            <button
+                              class="btn btn-xs btn-info"
+                              ng-disabled="currentPage >= tags.length/selectedPageSize - 1"
+                              ng-click="currentPage=currentPage+1"
+                            >
+                              <i class="fa fa-angle-double-right" aria-hidden="true" title="Next Page"></i>
+                            </button>
+                            <!--<select class="form-control-sm" TagsPerPage="margin-right: 5px " ng-model='selected_plt' ng-options='plt for plt in plt_list' ng-change='changePeriod(currentPeriod)'></select>-->
+                            <!--<select class="form-control-sm" TagsPerPage="margin-right: 5px " ng-model='selected_system' ng-options='sys for sys in system_list' ng-change='changePeriod(currentPeriod)'></select-->
+                            <!--<div isteven-multi-select-->
+                                  <!--input-model="modernBrowsers"-->
+                                  <!--output-model="outputBrowsers"-->
+                                  <!--button-label="icon name"-->
+                                  <!--item-label="icon name maker"-->
+                                  <!--tick-property="ticked">-->
+                              <!--</div>-->
+                        </div>
+                        <div class="pull-right text-right col-sm-2">
+                          <button class="btn btn-xs btn-success" ng-click="filter_tags()">
+                            <i class="fas fa-check-square" aria-hidden="true" title="Confirm Filters"></i>
+                          </button>
+                          <button class="btn btn-xs btn-warning" ng-click="refreshtags()">
+                            <i class="fas fa-sync-alt" aria-hidden="true" title="Refresh"></i>
+                          </button>
+                          <button class="btn btn-xs btn-success" ng-click="bulkUpdatetags()">
+                            <i class="fas fa-upload" aria-hidden="true" title="Bulk Update"></i>
+                          </button>
+                          <button class="btn btn-xs btn-danger" ng-click="bulkDeletetags()">
+                            <i class="fas fa-trash-alt" aria-hidden="true" title="Bulk Delete"></i>
+                          </button>
+                        </div>
+                      </div>
+                  </div>
+
+
+
+
+                    <!--<div id='chart' style='width: 100%; height: 100%;position:absolute;z-index:1'></div>-->
+                    <div class="panel panel-info" id='chart' style='width: 100%; height:50%;position:relative;top:5px);left:2px;z-index:2'>
+                    <!--<div class="panel-heading" style="background-color:#00877c">-->
+                        <!--<strong><font color="white">{[current_route]}</font></strong>-->
+                      <!--<span class="badge pull-right">Total Tags : {[ tags.length ]}</span>-->
+                    <!--</div>-->
+                        <br>
+                    <div class="panel-body">
+                                            <div class="row" >
+                           <div class="text-right col-sm-6">
+                             <div isteven-multi-select
+                                  input-model="plt_list"
+                                  output-model="output_plt_list"
+                                  button-label="icon name"
+                                  on-close="plt_change()"
+                                  item-label="icon name maker"
+                                  max-labels="1"
+                                  tick-property="ticked">
+                              </div>
+                        </div>
+                           <div class="col-sm-6">
+                             <div isteven-multi-select
+                                  input-model="system_list"
+                                  output-model="output_sys_list"
+                                  on-close="sys_change()"
+                                  button-label="icon name"
+                                  item-label="icon name maker"
+                                  max-labels="1"
+                                  tick-property="ticked">
+                              </div>
+                        </div>
+                        </div>
+
+                      </div>
+                      <div class="row col-sm-12">
+                        <div class="pull-left col-sm-6">
+                          Ordered by :
+                            <span class="badge">{[sort | uppercase]}{[sort? (reverse?' - Descending':' - Ascending'):'None']}</span>
+                        </div>
+                        <div class="pull-right">
+                          <span>Filtered by : </span>
+                          <span ng-show="search.Alias"
+                            >Tag =<span class="badge">{[search.Alias]}</span>
+                          </span>
+                          <span ng-show="search.description"
+                            >Description =<span class="badge">{[search.description]}</span>
+                          </span>
+                          <span ng-show="search.unit"
+                            >Unit =<span class="badge">{[search.unit]}</span>
+                          </span>
+                        </div>
+                      </div>
+                      <table
+                        class="table table-striped table-bordered"
+                        ng-hide="tags.length==0"
+                      >
+                        <thead>
+                          <tr>
+                            <th>
+                              <input
+                                type="text"
+                                class="form-control"
+                                ng-model="search.Alias"
+                                placeholder="Filter by Tag"
+                              />
+                            </th>
+                            <th>
+                              <input
+                                type="text"
+                                class="form-control"
+                                ng-model="search.description"
+                                placeholder="Filter by Description"
+                              />
+                            </th>
+                            <th>
+                              <input
+                                type="text"
+                                class="form-control"
+                                ng-model="search.unit"
+                                placeholder="Filter by Unit"
+                              />
+                            </th>
+                            <th></th>
+                          </tr>
+                          <tr>
+                            <th ng-click="setSort('Alias')">
+                              Tag<span
+                                class="pull-right fas fa-long-arrow-alt-up"
+                                ng-show="sort==='Alias' && reverse"
+                              ></span>
+                              <span
+                                class="pull-right fas fa-long-arrow-alt-down"
+                                ng-show="sort==='Alias' && !reverse"
+                              ></span>
+                            </th>
+                            <th ng-click="setSort('description')">
+                              Description<span
+                                class="pull-right fas fa-long-arrow-alt-up"
+                                ng-show="sort === 'description' && reverse"
+                              ></span>
+                              <span
+                                class="pull-right fas fa-long-arrow-alt-down"
+                                ng-show="sort === 'description' && !reverse"
+                              ></span>
+                            </th>
+                            <th ng-click="setSort('unit')">
+                              Unit<span
+                                class="pull-right fas fa-long-arrow-alt-up"
+                                ng-show="sort==='unit' && reverse"
+                              ></span>
+                              <span
+                                class="pull-right fas fa-long-arrow-alt-down"
+                                ng-show="sort==='unit' && !reverse"
+                              ></span>
+                            </th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="tag in tags | filter:search | orderBy:sort:reverse | limitTo: selectedPageSize : -currentPage*selectedPageSize track by $index">
+                            <td ng-click="edittag(tag)">
+                              <span ng-hide="tag.editMode">{[tag.Alias]}</span>
+                              <input
+                                type="text"
+                                name="Alias"
+                                ng-show="tag.editMode"
+                                class="form-control"
+                                ng-model="tag.Alias"
+                                placeholder="Tag"
+                                required=""
+                              />
+                            </td>
+                            <td ng-click="edittag(tag)">
+                              <span ng-hide="tag.editMode">{[tag.description]}</span>
+                              <input
+                                type="text"
+                                ng-show="tag.editMode"
+                                name="description"
+                                class="form-control"
+                                ng-model="tag.description"
+                                placeholder="Description"
+                                required=""
+                              />
+                            </td>
+                            <td ng-click="edittag(tag)">
+                              <span ng-hide="tag.editMode">{[tag.unit]}</span>
+                              <input
+                                type="text"
+                                ng-show="tag.editMode"
+                                name="unit"
+                                class="form-control"
+                                ng-model="tag.unit"
+                                placeholder="unit"
+                                required=""
+                              />
+                            </td>
+                            <td>
+                              <a href="" ng-hide="tag.editMode" ng-click="edittag(tag)"
+                                ><i class="fas fa-edit" aria-hidden="true" title="Edit Tag"></i></a>
+
+                              <a href=""
+                                ng-hide="tag.editMode"
+                                ng-click="deletetag(tag,$index)"
+                                ><i class="far fa-trash-alt" aria-hidden="true" title="Delete Tag"></i></a
+                              >
+                              <a
+                                href=""
+                                ng-show="tag.editMode"
+                                ng-click="savetag(tag,$index)"
+                                ><i class="fas fa-check-square" aria-hidden="true" title="Save"></i></a
+                              >
+                              <a href="" ng-show="tag.editMode" ng-click="cancel(tag)"
+                                ><i class="fas fa-ban" aria-hidden="true" title="Cancel"></i></a
+                              >
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                    <!--<div id='tableDiv' style='width: 100%; height:50%;position:relative;top:5px);left:2px;z-index:2'>-->
+                      <!--<table style="width:100%">-->
+                          <!--<tr>-->
+                            <!--<th>Alias</th>-->
+                            <!--<th>description</th>-->
+                            <!--<th>Age</th>-->
+                          <!--</tr>-->
+                          <!--<tr>-->
+                            <!--<td>Jill</td>-->
+                            <!--<td>Smith</td>-->
+                            <!--<td>50</td>-->
+                          <!--</tr>-->
+                          <!--<tr>-->
+                            <!--<td>Eve</td>-->
+                            <!--<td>Jackson</td>-->
+                            <!--<td>94</td>-->
+                          <!--</tr>-->
+                        <!--</table>-->
+                    <!--</div>-->
+                  </div>
+                <!--</div>-->
+           <!--</div>-->
+          <!--</div>-->
+
+        <div class="row">
+          <!-- /widget -->
+        </div>
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+    <script type='text/javascript' src="{{ url_for('static', filename='js/base.js', version=version_number) }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='angular/app.js', version=version_number) }}"></script>
+
+
+</body>
+
+
+{% endblock %}

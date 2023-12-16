@@ -1,0 +1,93 @@
+{% extends 'starter.html' %} {% block container %}
+    <style>
+        #chart {
+  background: #fff;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+text {
+  pointer-events: none;
+}
+
+.grandparent text {
+  font-weight: bold;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+}
+
+rect.parent,
+.grandparent rect {
+  stroke-width: 2px;
+}
+
+rect.parent {
+    pointer-events: none;
+}
+
+.grandparent rect {
+  fill: orange;
+}
+
+.grandparent:hover rect {
+  fill: #ee9700;
+}
+
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+}
+
+.children rect.parent {
+  fill: #bbb;
+  fill-opacity: .5;
+}
+
+.children:hover rect.child {
+  fill: #bbb;
+}
+    </style>
+
+
+<body data-ng-app="DINEApp" class="ng-cloak" data-ng-controller='mainController'>
+            <div class="card-header" style="height: 50px;">
+              <i class="fas fa-sitemap"></i>
+                Landing Page
+                <div style="float: right;" class="btn-group btn-group-sm" data-toggle="buttons" >
+                      <input style="float: right;" type="submit" class="btn btn-xs btn-primary " value="Tag List" ng-click='displayTags()' ng-class="currentView === 'table' ? 'active' : ''">
+                </div>
+            </div>
+
+
+                <div class="card-body" id="wtf">
+                  <div class='displayArea' >
+
+          <div>
+            <div id="timeline6"></div>
+          </div>
+
+        <div class="row">
+          <!-- /widget -->
+        </div>
+
+      </div>
+    </div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+    <script type='text/javascript' src="{{ url_for('static', filename='js/base.js', version=version_number) }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='angular/app.js', version=version_number) }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/d3-timeline.js', version=version_number) }}"></script>
+<!--    <script type='text/javascript' src="{{ url_for('static', filename='js/require.js', version=version_number) }}"></script>-->
+</body>
+
+
+{% endblock %}
